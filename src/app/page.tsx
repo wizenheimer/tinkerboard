@@ -1,5 +1,4 @@
-import Header from "../components/ui/header";
-import Navbar from "./navbar";
+import Navbar from "@/components/ui/navbar";
 import Playground from "./playground";
 
 export default function Home() {
