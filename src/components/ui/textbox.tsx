@@ -1,9 +1,38 @@
-import { ChangeEvent, useState } from "react";
+import {
+	ChangeEvent,
+	Dispatch,
+	SetStateAction,
+	useEffect,
+	useState,
+} from "react";
 import { Card, Textarea, Button, Flex, Title, Subtitle } from "@tremor/react";
+import { textHandler } from "@/services/handler";
+import { defaultText } from "./defaultText";
 
-type Props = {};
-export default function TextBox({}: Props) {
-	const [value, setValue] = useState("");
+type Props = {
+	setExplorerContent: Dispatch<SetStateAction<Content[] | undefined>>;
+};
+
+export default function TextBox({ setExplorerContent }: Props) {
+	const [text, setText]: [
+		string | undefined,
+		Dispatch<SetStateAction<string | undefined>>
+	] = useState();
+
+	const [disabled, setDisabled] = useState(true);
+
+	useEffect(() => {
+		setText(defaultText);
+		setDisabled(false);
+	}, []);
+
+	const embedContent = () => {
+		if (text) {
+			setDisabled(true);
+			setExplorerContent(textHandler(text));
+			setDisabled(false);
+		}
+	};
 
 	return (
 		<Card className="flex flex-col">
@@ -12,25 +41,29 @@ export default function TextBox({}: Props) {
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
-					alert(value);
 				}}
 				className="mt-5"
 			>
 				<div className="flex flex-col gap-2">
 					<Textarea
 						onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-							setValue(e.target.value);
+							setText(e.target.value);
 						}}
 						id="description"
 						placeholder="Start typing here..."
-						value={value}
+						value={text}
 						rows={20}
 					/>
 				</div>
 			</form>
 			<Flex justifyContent="end" className="space-x-2 mt-5">
-				<Button size="xs" variant="primary">
-					Generate Embedding
+				<Button
+					size="xs"
+					variant="primary"
+					disabled={disabled}
+					onClick={(e) => embedContent()}
+				>
+					{disabled ? "Generating" : "Generate"} Embeddings
 				</Button>
 			</Flex>
 		</Card>
