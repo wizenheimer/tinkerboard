@@ -1,62 +1,14 @@
-import {
-	Badge,
-	Card,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeaderCell,
-	TableRow,
-	Text,
-	Title,
-	TextInput,
-	Subtitle,
-	Flex,
-} from "@tremor/react";
-import DataTable, { Content } from "./datatable";
+"use client";
+import { Badge, Card, Title, TextInput, Subtitle, Flex } from "@tremor/react";
+import DataTable from "./datatable";
+import { Dispatch, SetStateAction } from "react";
 
-const content: Content[] = [
-	{
-		id: "121",
-		content: "Federal Councillor",
-		embedding: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-		similarity: 1.0,
-	},
-	{
-		id: "212",
-		content: "Federal Councillor",
-		embedding: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-		similarity: 1.0,
-	},
-	{
-		id: "313",
-		content: "Federal Councillor",
-		embedding: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-		similarity: 1.0,
-	},
-	{
-		id: "414",
-		content: "Federal Councillor",
-		embedding: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-		similarity: 1.0,
-	},
-	{
-		id: "515",
-		content: "Federal Councillor",
-		embedding: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-		similarity: 1.0,
-	},
-	{
-		id: "616",
-		content: "Federal Councillor",
-		embedding: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-		similarity: 1.0,
-	},
-];
+type Props = {
+	explorerContent: Content[] | undefined;
+	setExplorerContent: Dispatch<SetStateAction<Content[] | undefined>>;
+};
 
-type Props = {};
-
-export default function Explorer({}: Props) {
+export default function Explorer({ explorerContent }: Props) {
 	return (
 		<Card className="flex flex-col">
 			<Title>Search Results</Title>
@@ -65,7 +17,7 @@ export default function Explorer({}: Props) {
 				<Badge size="xs">100 ms</Badge>
 			</Flex>
 			<TextInput placeholder="Search..." className="mt-5" />
-			<DataTable content={content} />
+			<DataTable explorerContent={explorerContent} />
 		</Card>
 	);
 }

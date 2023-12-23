@@ -9,18 +9,11 @@ import {
 	Text,
 } from "@tremor/react";
 
-export interface Content {
-	id: string;
-	content: string;
-	embedding: Float32Array | number[];
-	similarity: number;
-}
-
 type Props = {
-	content: Content[];
+	explorerContent: Content[] | undefined;
 };
 
-export default function DataTable({ content }: Props) {
+export default function DataTable({ explorerContent }: Props) {
 	return (
 		<Table className="mt-5">
 			<TableHead>
@@ -28,11 +21,10 @@ export default function DataTable({ content }: Props) {
 					<TableHeaderCell>ID</TableHeaderCell>
 					<TableHeaderCell>Content</TableHeaderCell>
 					<TableHeaderCell>Embedding</TableHeaderCell>
-					<TableHeaderCell>Similarity</TableHeaderCell>
 				</TableRow>
 			</TableHead>
 			<TableBody>
-				{content.map((item) => (
+				{explorerContent?.map((item) => (
 					<TableRow key={item.id}>
 						<TableCell>{item.id}</TableCell>
 						<TableCell>
@@ -40,9 +32,6 @@ export default function DataTable({ content }: Props) {
 						</TableCell>
 						<TableCell>
 							<Text>{item.embedding}</Text>
-						</TableCell>
-						<TableCell>
-							<Text>{item.similarity}</Text>
 						</TableCell>
 					</TableRow>
 				))}

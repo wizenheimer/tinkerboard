@@ -1,7 +1,4 @@
-import { useState } from "react";
-
-type Props = {};
-
+"use client";
 import {
 	Card,
 	SearchSelect,
@@ -11,49 +8,53 @@ import {
 	Subtitle,
 	Button,
 } from "@tremor/react";
-import DataTable, { Content } from "./datatable";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import SampleTable from "./sampletable";
+import { datasetHandler } from "@/services/handler";
 
-const content: Content[] = [
-	{
-		id: "121",
-		content: "Federal Councillor",
-		embedding: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-		similarity: 1.0,
-	},
-	{
-		id: "212",
-		content: "Federal Councillor",
-		embedding: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-		similarity: 1.0,
-	},
-	{
-		id: "313",
-		content: "Federal Councillor",
-		embedding: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-		similarity: 1.0,
-	},
-	{
-		id: "414",
-		content: "Federal Councillor",
-		embedding: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-		similarity: 1.0,
-	},
-	{
-		id: "515",
-		content: "Federal Councillor",
-		embedding: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-		similarity: 1.0,
-	},
-	{
-		id: "616",
-		content: "Federal Councillor",
-		embedding: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-		similarity: 1.0,
-	},
-];
+type Props = {
+	setExplorerContent: Dispatch<SetStateAction<Content[] | undefined>>;
+};
 
-export default function Dataset({}: Props) {
-	const [value, setValue] = useState("");
+export default function Dataset({ setExplorerContent }: Props) {
+	const [dataset, setDataset]: [
+		string | undefined,
+		Dispatch<SetStateAction<string | undefined>>
+	] = useState();
+
+	const [size, setSize]: [
+		string | undefined,
+		Dispatch<SetStateAction<string | undefined>>
+	] = useState();
+
+	const [sampleContent, setSampleContent]: [
+		Content[] | undefined,
+		Dispatch<SetStateAction<Content[] | undefined>>
+	] = useState();
+
+	const [disabled, setDisabled]: [
+		boolean | undefined,
+		Dispatch<SetStateAction<boolean | undefined>>
+	] = useState();
+
+	useEffect(() => {
+		setDataset("SET_1");
+		setSize("10");
+		setDisabled(false);
+	}, []);
+
+	useEffect(() => {
+		setDisabled(true);
+		setSampleContent(datasetHandler(dataset));
+		setDisabled(false);
+	}, [dataset]);
+
+	const loadExplorerContent = () => {
+		setDisabled(true);
+		setExplorerContent(datasetHandler(dataset, size));
+		setDisabled(false);
+	};
+
 	return (
 		<Card className="flex flex-col">
 			<Title>Dataset</Title>
@@ -61,41 +62,45 @@ export default function Dataset({}: Props) {
 			<Flex justifyContent="end" className="space-x-2 mt-5">
 				<div className="max-w-sm mx-auto space-y-6 grow">
 					<SearchSelect
-						value={value}
-						onValueChange={setValue}
+						value={dataset}
 						placeholder="Dataset"
+						onValueChange={(dataset) => {
+							setDataset(dataset);
+						}}
 					>
-						<SearchSelectItem value="1">
-							Kilometers
-						</SearchSelectItem>
-						<SearchSelectItem value="2">Meters</SearchSelectItem>
-						<SearchSelectItem value="3">Miles</SearchSelectItem>
-						<SearchSelectItem value="4">
-							Nautical Miles
-						</SearchSelectItem>
+						<SearchSelectItem value="SET_1">SET_1</SearchSelectItem>
+						<SearchSelectItem value="SET_2">SET_2</SearchSelectItem>
+						<SearchSelectItem value="SET_3">SET_3</SearchSelectItem>
+						<SearchSelectItem value="SET_4">SET_4</SearchSelectItem>
 					</SearchSelect>
 				</div>
 				<div className="max-w-sm mx-auto space-y-6">
 					<SearchSelect
-						value={value}
-						onValueChange={setValue}
+						value={size}
 						placeholder="Size"
+						onValueChange={(size) => {
+							setSize(size);
+						}}
 					>
-						<SearchSelectItem value="1">
-							Kilometers
-						</SearchSelectItem>
-						<SearchSelectItem value="2">Meters</SearchSelectItem>
-						<SearchSelectItem value="3">Miles</SearchSelectItem>
-						<SearchSelectItem value="4">
-							Nautical Miles
-						</SearchSelectItem>
+						<SearchSelectItem value="10">10</SearchSelectItem>
+						<SearchSelectItem value="100">100</SearchSelectItem>
+						<SearchSelectItem value="1000">1000</SearchSelectItem>
+						<SearchSelectItem value="10000">10000</SearchSelectItem>
 					</SearchSelect>
 				</div>
 			</Flex>
-			<DataTable content={content} />
+			<SampleTable sampleContent={sampleContent} />
 			<Flex justifyContent="end" className="space-x-2 mt-5">
-				<Button size="xs" variant="primary" className="mr-4">
-					Load Dataset
+				<Button
+					size="xs"
+					variant="primary"
+					className="mr-4"
+					onClick={(e) => {
+						loadExplorerContent();
+					}}
+					disabled={disabled}
+				>
+					{disabled ? "Loading" : "Load"} Dataset
 				</Button>
 			</Flex>
 		</Card>
