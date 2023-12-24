@@ -10,7 +10,7 @@ export function textHandler(text: string): Content[] {
 	let content: Content[] = [];
 	textChunks.forEach((chunk, index) => {
 		content.push({
-			id: String(index),
+			id: index,
 			content: chunk,
 			embedding: generateEmbeddings(chunk),
 		});
@@ -30,7 +30,7 @@ export function datasetHandler(
 	// make a request and fetch embeddings
 	for (let i = 0; i < Number(dataSize); i += 1) {
 		content.push({
-			id: String(i),
+			id: i,
 			content: faker.hacker.phrase(),
 			embedding: Array.from({ length: 32 }, () =>
 				Math.floor(Math.random() * 10)
