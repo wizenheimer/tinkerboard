@@ -16,6 +16,8 @@ import Explorer from "@/components/ui/explorer";
 import Dataset from "@/components/ui/dataset";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { datasetHandler } from "@/services/handler";
+import { VectorStore } from "tinkerbird";
+import { vectorStoreHandler } from "@/services/vectorstore";
 
 type Props = {};
 
@@ -25,8 +27,23 @@ export default function Playground({}: Props) {
 		Dispatch<SetStateAction<Content[] | undefined>>
 	] = useState();
 
+	const [vectorStore, setVectorStore]: [
+		VectorStore | undefined,
+		Dispatch<SetStateAction<VectorStore | undefined>>
+	] = useState();
+
 	useEffect(() => {
 		setExplorerContent(datasetHandler());
+
+		const fx = async () => {
+			setVectorStore(
+				await VectorStore.create({
+					collectionName: "playground",
+				})
+			);
+		};
+
+		fx();
 	}, []);
 
 	return (
@@ -45,10 +62,14 @@ export default function Playground({}: Props) {
 							numItemsLg={2}
 							className="gap-6 mt-6"
 						>
-							<TextBox setExplorerContent={setExplorerContent} />
+							<TextBox
+								setExplorerContent={setExplorerContent}
+								vectorStore={vectorStore}
+							/>
 							<Explorer
 								explorerContent={explorerContent}
 								setExplorerContent={setExplorerContent}
+								vectorStore={vectorStore}
 							/>
 						</Grid>
 					</TabPanel>
@@ -62,6 +83,7 @@ export default function Playground({}: Props) {
 							<Explorer
 								explorerContent={explorerContent}
 								setExplorerContent={setExplorerContent}
+								vectorStore={vectorStore}
 							/>
 						</Grid>
 					</TabPanel>

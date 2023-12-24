@@ -8,12 +8,15 @@ import {
 import { Card, Textarea, Button, Flex, Title, Subtitle } from "@tremor/react";
 import { textHandler } from "@/services/handler";
 import { defaultText } from "./defaultText";
+import { vectorStoreHandler } from "@/services/vectorstore";
+import { VectorStore } from "tinkerbird";
 
 type Props = {
 	setExplorerContent: Dispatch<SetStateAction<Content[] | undefined>>;
+	vectorStore: VectorStore | undefined;
 };
 
-export default function TextBox({ setExplorerContent }: Props) {
+export default function TextBox({ setExplorerContent, vectorStore }: Props) {
 	const [text, setText]: [
 		string | undefined,
 		Dispatch<SetStateAction<string | undefined>>
@@ -29,7 +32,9 @@ export default function TextBox({ setExplorerContent }: Props) {
 	const embedContent = () => {
 		if (text) {
 			setDisabled(true);
-			setExplorerContent(textHandler(text));
+			const content = textHandler(text);
+			vectorStore?.buildIndex(content);
+			setExplorerContent(content);
 			setDisabled(false);
 		}
 	};
@@ -61,7 +66,7 @@ export default function TextBox({ setExplorerContent }: Props) {
 					size="xs"
 					variant="primary"
 					disabled={disabled}
-					onClick={(e) => embedContent()}
+					onClick={() => embedContent()}
 				>
 					{disabled ? "Generating" : "Generate"} Embeddings
 				</Button>

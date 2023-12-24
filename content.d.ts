@@ -1,5 +1,5 @@
 type Content = {
-	id: string;
+	id: number;
 	content: string;
 	embedding: Float32Array | number[];
 };
