@@ -4,8 +4,7 @@ import { generateEmbeddings } from "./embeddings";
 export async function vectorStoreHandler(
 	collectionName: string = "vectorDB"
 ): Promise<VectorStore> {
-	// TODO: delete a store if it exists, utility function
-	// create a new store
+	// create a new store, deletes it if it already exists
 	const vectorStore = await VectorStore.create({
 		collectionName: collectionName,
 	});
@@ -13,25 +12,28 @@ export async function vectorStoreHandler(
 	return vectorStore;
 }
 
-export function addData(data: Content[], vectorStore: VectorStore) {
-	// TODO: check if the store exists, utility function
-	// if it doesn't exist, create a new store
+export function addData(
+	data: Content[],
+	vectorStore: VectorStore,
+	removeExisting: boolean = false
+) {
+	// remove existing data if the dimensions mismatch
+	if (data[0].embedding.length != vectorStore.d || removeExisting)
+		vectorStore.deleteIndex();
 	// add the data to the store
 	vectorStore.buildIndex(data);
 }
 
 export function search(
 	query: string | number[],
-	store: VectorStore,
+	vectorStore: VectorStore,
 	topK: number = 5
 ): vectorResult {
 	// convert the query string into number[] if not already
 	const target =
 		typeof query === "string" ? generateEmbeddings(query) : query;
 	// perform the search on the store
-	const results = store.query(target, topK);
+	const results = vectorStore.query(target, topK);
 	// return the topK values as Result
-	// TODO: vectorStoreResult type should be modified, returns only id and similarity
-	// need id, content, embeddings, similarity
 	return results;
 }

@@ -11,12 +11,14 @@ import {
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import SampleTable from "./sampletable";
 import { datasetHandler } from "@/services/handler";
+import { VectorStore } from "tinkerbird";
 
 type Props = {
 	setExplorerContent: Dispatch<SetStateAction<Content[] | undefined>>;
+	vectorStore: VectorStore | undefined;
 };
 
-export default function Dataset({ setExplorerContent }: Props) {
+export default function Dataset({ setExplorerContent, vectorStore }: Props) {
 	const [dataset, setDataset]: [
 		string | undefined,
 		Dispatch<SetStateAction<string | undefined>>
@@ -45,13 +47,17 @@ export default function Dataset({ setExplorerContent }: Props) {
 
 	useEffect(() => {
 		setDisabled(true);
-		setSampleContent(datasetHandler(dataset));
+		const content = datasetHandler(dataset);
+		setSampleContent(content);
 		setDisabled(false);
 	}, [dataset]);
 
 	const loadExplorerContent = () => {
 		setDisabled(true);
-		setExplorerContent(datasetHandler(dataset, size));
+		const content = datasetHandler(dataset, size);
+		vectorStore?.deleteIndex();
+		vectorStore?.buildIndex(content);
+		setExplorerContent(content);
 		setDisabled(false);
 	};
 
@@ -95,7 +101,7 @@ export default function Dataset({ setExplorerContent }: Props) {
 					size="xs"
 					variant="primary"
 					className="mr-4"
-					onClick={(e) => {
+					onClick={() => {
 						loadExplorerContent();
 					}}
 					disabled={disabled}

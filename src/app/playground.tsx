@@ -79,7 +79,10 @@ export default function Playground({}: Props) {
 							numItemsLg={2}
 							className="gap-6 mt-6"
 						>
-							<Dataset setExplorerContent={setExplorerContent} />
+							<Dataset
+								setExplorerContent={setExplorerContent}
+								vectorStore={vectorStore}
+							/>
 							<Explorer
 								explorerContent={explorerContent}
 								setExplorerContent={setExplorerContent}

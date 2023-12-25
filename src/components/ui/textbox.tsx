@@ -33,6 +33,7 @@ export default function TextBox({ setExplorerContent, vectorStore }: Props) {
 		if (text) {
 			setDisabled(true);
 			const content = textHandler(text);
+			vectorStore?.deleteIndex();
 			vectorStore?.buildIndex(content);
 			setExplorerContent(content);
 			setDisabled(false);

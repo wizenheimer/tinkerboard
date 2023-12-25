@@ -9,12 +9,6 @@ import {
 	Text,
 } from "@tremor/react";
 
-export interface Content {
-	id: string;
-	content: string;
-	embedding: Float32Array | number[];
-}
-
 type Props = {
 	sampleContent: Content[] | undefined;
 };
